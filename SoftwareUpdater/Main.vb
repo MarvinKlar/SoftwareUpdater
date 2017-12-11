@@ -1,9 +1,38 @@
 ﻿Imports System.IO
+Imports System.Threading
 Imports System.Xml
 
 Public Class Main
 
+    Private currentTask As Thread
+
+    Private Sub cancelButton_Click(sender As Object, e As EventArgs)
+
+    End Sub
+
     Private Sub Main_Load(sender As Object, e As EventArgs) Handles MyBase.Load
+        currentTask = New Thread(AddressOf run)
+        currentTask.Start()
+    End Sub
+
+    Private Sub Main_FormClosing(sender As Object, e As FormClosingEventArgs) Handles MyBase.FormClosing
+        e.Cancel = True
+        If IsNothing(currentTask) Then
+            Dim result As MsgBoxResult = MsgBox("Do you really want to exit the application?", MsgBoxStyle.YesNo, "Exit application?")
+            If result = MsgBoxResult.Yes Then
+                e.Cancel = False
+            End If
+        Else
+            Dim result As MsgBoxResult = MsgBox("Do you really want to cancel the current task?", MsgBoxStyle.YesNo, "Cancel task?")
+            If result = MsgBoxResult.Yes Then
+                If Not IsNothing(currentTask) Then
+                    currentTask.Abort()
+                End If
+            End If
+        End If
+    End Sub
+
+    Private Sub run()
         Try
             setCurrentAction("Loading configuration file...")
             Dim softwareManager As New SoftwareManager
@@ -81,26 +110,35 @@ Public Class Main
     End Sub
 
     Private Sub finish()
+        currentTask = Nothing
         setActionsToProgress(1)
         addProgress()
-        setCurrentAction("Done")
+        addResultMessage("Done")
     End Sub
 
     Public Sub addResultMessage(message As String)
-        results.Text &= vbNewLine & message
+        results.Invoke(Sub()
+                           results.Text &= vbNewLine & message
+                       End Sub)
+        setCurrentAction(message)
     End Sub
 
     Public Sub setCurrentAction(message As String)
-        currentAction.Text = message
+        currentAction.Invoke(Sub()
+                                 currentAction.Text = message
+                             End Sub)
     End Sub
 
     Public Sub setActionsToProgress(actionsToProgress As Integer)
-        progressBar.Step = 1
-        progressBar.Maximum = actionsToProgress
+        progressBar.Invoke(Sub()
+                               progressBar.Step = 1
+                               progressBar.Maximum = actionsToProgress
+                           End Sub)
     End Sub
 
     Public Sub addProgress()
-        progressBar.PerformStep()
+        progressBar.Invoke(Sub()
+                               progressBar.PerformStep()
+                           End Sub)
     End Sub
-
 End Class

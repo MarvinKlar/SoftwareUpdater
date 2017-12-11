@@ -1,7 +1,7 @@
 # SoftwareUpdater
 Application which installs configured software silent and keeps it up to date!
 
-##Download
+## Download
 
 You can download the latest stable build of the application here:  
 https://klar.ddns.net/download/SoftwareUpdater/SoftwareUpdater.exe  
@@ -19,5 +19,5 @@ https://klar.ddns.net/download/SoftwareUpdater/config.xml
 ## Bugs, issues or simply nice ideas
 
 If you have any trouble using the software or missing any feature, let me know about that:  
-Issues, bugs: https://github.com/MrMinecraft15/SoftwareUpdater/issues  
+Issues, bugs: https://github.com/MarvinKlar/SoftwareUpdater/issues  
 Questions, feature requests or feedback: marvin.klar@yahoo.de  
