@@ -1,7 +1,64 @@
 # SoftwareUpdater
-Application for Windows which installs configured software silent and keeps it up to date!
+Application for Windows which installs configured software silently and keeps it up to date!  
 
-> The application is still under development! Not everything might work as described here!
+If you don't run the application in silent mode, it will prompt you to close the softwares you are currently updating, if they are currtly opened.
+You can also configure softwares to get installed once and to not to receive updates.
+
+You can specifiy the temporary folder (working folder) and the location of the configuration file.
+
+The default configuration which comes with a blank installation is already configured to install and update the following softwares:
+> 7-Zip  
+> Android Studio  
+
+Planned softwares:
+> Acrobat Reader  
+> Flash Player  
+> Battle.net  
+> Bitvise  
+> ControlCenter  
+> CCleaner  
+> Discord  
+> Dropbox  
+> Easy2Sync  
+> Epic Games Launcher
+> FileZilla  
+> GIMP  
+> Git  
+> Chrome  
+> HeidiSQL  
+> IrfanView  
+> JRE & JDK  
+> KeePass  
+> League of Legends  
+> Lightshot  
+> .NET Framework  
+> Office Pro Plus  
+> Security Essentials  
+> SQL Server Management Studio  
+> Visual Studio 2017 Enterprise  
+> Visual Studio Code  
+> Minecraft  
+> Firefox  
+> Nmap  
+> Notepad++  
+> OpenVPN  
+> PuTTY  
+> Razer Chroma  
+> Razer Synapse  
+> Remote Desktop Manager  
+> SceneBuilder  
+> SmartInspect and SmartInspect Pro  
+> Spotify  
+> Steam  
+> TeamSpeak  
+> TeamViewer  
+> PLC Utility  
+> VLC Media player  
+> WhatsApp  
+> Yatqa  
+> Windows Essentials  
+
+Let me know whats your wish! Contact: marvin.klar@yahoo.de
 
 
 
@@ -15,6 +72,19 @@ https://klar.ddns.net/download/SoftwareUpdater/config.xml
 
 
 
+## Start arguments
+> -tempDir <Path of the temporary folder>
+> Example: -tempDir "C:\Windows\Temp\"
+>
+> -configFile <Path to the configuration file>
+> Example: -configFile "C:\Users\yourUserName\Documents\SoftwareUpdater\config.xml"
+>
+> -silent ``Installs and updates the given softwares silently without a window``
+>
+> -clearCache ```Clears the generated cache (downloaded installation files which could not be installed). Use this option, if you have defective installation files (e.g. when the download was canceled)``
+
+
+
 ## Configuration
 
 The configuration is a little tricky to understand. The configuration is XML based, so make sure to follow the rules for XML files: https://www.w3schools.com/xml/xml_syntax.asp
@@ -25,6 +95,11 @@ Example:
 >``<software active="true">``
 
 All softwares are commonly so configured that you don't need to change there anything. If you want to add own software make sure to read the ``hints`` at the bottom of the page.
+
+### Disable updates for a software
+If you don't want to update a software (e.g. if you just have a licence for a specific version or if the software has an own updater) you can disable updates for a software whilst setting the attribute ``update`` to ``false`` like this:
+>``<software active="true" update="false">``
+
 
 ### Uninstall the software before update
 You can force the application to uninstall the software before updating the software whilst setting attribute ``requiresUninstall`` of the ``software`` node to ``true``. If nothing or ``false`` is specified the application will just install the software when updating it.  
@@ -41,10 +116,15 @@ The ``installPath`` node is needed for the application to know, which version of
 Example:
 >``<installPath>C:\Program Files\7-Zip\7zG.exe</installPath>``
 
+### The installation arguments
+The ``installationArguments`` node defines the arguments, which are required to install the software unattended. The value ``%installationfile%`` will be replaced with the path of the installation file. You can configure the arguments for your needs.
+Example:
+>``<installationArguments>%installationfile% /S</installationArguments>``
+
 ### The processes of the software
 The ``processes`` node defines all processes, which might be started by the software, when the software runs. The processes are comma seperated. The application checks, if any of the processes listed here are running, before updating the configured software. Make sure, that these processes are not running when the software should be updated. But if the application will skip these softwares in silent mode or ask the user to close the processes in normal mode.  
 Example:
->``<processes>Code,PerfWatson2</processes>``
+>``<processes>7zFM,7zG,7z</processes>``
 
 ### The website of the software
 The ``website`` node is used to get the latest version number of the software and to get the download link of the software. So make sure that the website contains both, the latest version number and the download link for the latest version of the software.
@@ -73,6 +153,7 @@ Keep in mind that the website of the software you configure might change. If you
 - Logging
 - Possiblity to configure params of the installer of the softwares
 - Language support
+- Possiblity to configure the way to get the installed version of the software (productversion, fileversion, registry)
 
 
 

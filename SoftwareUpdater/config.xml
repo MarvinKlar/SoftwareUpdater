@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<softwareUpdater>
+	<softwares>
+		<software active="true">
+			<name>7-Zip</name>
+			<installPath>C:\Program Files\7-Zip\7zG.exe</installPath>
+			<installationArguments>%installationfile% /S</installationArguments>
+			<processes>7zFM,7zG,7z</processes>
+			<website>http://7-zip.de/index.html</website>
+			<versionString>7-Zip * (</versionString>
+			<downloadLink>http://7-zip.org/a/7z*-x64.exe</downloadLink>
+		</software>
+		
+		<software update="false" active="true">
+			<name>Android Studio</name>
+			<installPath>C:\Program Files\Android\Android Studio\bin\studio64.exe</installPath>
+			<installationArguments>%installationfile% /S /Allusers</installationArguments>
+			<processes></processes>
+			<website>https://developer.android.com/studio/index.html</website>
+			<versionString>https://dl.google.com/dl/android/studio/install/*/android-studio-ide-*-windows.exe</versionString>
+			<downloadLink>https://dl.google.com/dl/android/studio/install/*/android-studio-ide-*-windows.exe</downloadLink>
+		</software>
+	</softwares>
+</softwareUpdater>

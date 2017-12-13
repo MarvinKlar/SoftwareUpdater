@@ -7,6 +7,16 @@ Public Class SoftwareManager
 
 #Region "properties"
 
+    Private _TemporaryDirectory As DirectoryInfo
+    Property TemporaryDirectory As DirectoryInfo
+        Get
+            Return _TemporaryDirectory
+        End Get
+        Set(value As DirectoryInfo)
+            _TemporaryDirectory = value
+        End Set
+    End Property
+
     Private _ConfigurationFile As FileInfo
     Property ConfigurationFile As FileInfo
         Get
@@ -47,41 +57,13 @@ Public Class SoftwareManager
         End Set
     End Property
 
-    'Private _InstalledSoftwares As New Dictionary(Of String, Version)
-    'Property InstalledSoftwares As Dictionary(Of String, Version)
-    '    Get
-    '        Return _InstalledSoftwares
-    '    End Get
-    '    Set(value As Dictionary(Of String, Version))
-    '        _InstalledSoftwares = value
-    '    End Set
-    'End Property
-
 #End Region
 
 #Region "constructors"
 
-    Sub New(Optional ByVal configurationFile As FileInfo = Nothing)
-        _ConfigurationFile = configurationFile
-
-        initialize()
-    End Sub
-
-    Private Sub initialize()
-        If IsNothing(ConfigurationFile) Then
-            ConfigurationFile = New FileInfo(Application.StartupPath() & "\config.xml")
-        End If
-
-        Dim tempFolder As New DirectoryInfo(Application.StartupPath() & "\Temp\")
-        tempFolder.Create()
-
-        'Dim baseKey As RegistryKey = Registry.LocalMachine.OpenSubKey("Software\Microsoft\Windows\CurrentVersion\Uninstall")
-        'For Each subKeyName As String In baseKey.GetSubKeyNames()
-        '    Dim softwareKey As RegistryKey = baseKey.OpenSubKey(subKeyName)
-        '    If Not IsNothing(softwareKey.GetValue("DisplayName")) And Not IsNothing(softwareKey.GetValue("DisplayVersion")) Then
-        '        InstalledSoftwares.Add(softwareKey.GetValue("DisplayName"), New Version(softwareKey.GetValue("DisplayVersion")))
-        '    End If
-        'Next
+    Sub New(temporaryDirectory As DirectoryInfo, configurationFile As FileInfo)
+        Me.TemporaryDirectory = temporaryDirectory
+        Me.ConfigurationFile = configurationFile
     End Sub
 
 #End Region
@@ -94,17 +76,21 @@ Public Class SoftwareManager
         fileStream.Close()
 
         _SoftwareConfigurations = Configuration.Item("softwareUpdater").Item("softwares").GetElementsByTagName("software")
+
+        TemporaryDirectory.create()
     End Sub
 
     Function loadSoftware(softwareConfiguraion As XmlNode) As Software
-        If IsNothing(_SoftwareConfigurations) Then
+        If IsNothing(SoftwareConfigurations) Then
             Throw New Exception("The configuration was not loaded yet!")
         End If
 
-        Dim name, installPath, website, downloadLink As String
+        Dim name, installPath, website, downloadLink, installationArguments As String
         Dim versionString As String = Nothing
         Dim processes As New List(Of String)
-        Dim active, requiresUninstall As Boolean
+        Dim active As Boolean = True
+        Dim requiresUninstall As Boolean = False
+        Dim update As Boolean = True
 
         Try
             name = softwareConfiguraion.Item("name").InnerText
@@ -131,6 +117,12 @@ Public Class SoftwareManager
         End Try
 
         Try
+            installationArguments = softwareConfiguraion.Item("installationArguments").InnerText
+        Catch ex As Exception
+            Throw New Exception("The installationArguments node is missing (name=" & name & ")")
+        End Try
+
+        Try
             versionString = softwareConfiguraion.Item("versionString").InnerText
         Catch ex As Exception
         End Try
@@ -148,18 +140,23 @@ Public Class SoftwareManager
         End Try
 
         Try
+            update = softwareConfiguraion.Attributes("update").InnerText.ToLower().Equals("true")
+        Catch ex As Exception
+        End Try
+
+        Try
             active = softwareConfiguraion.Attributes("active").InnerText.ToLower().Equals("true")
         Catch ex As Exception
         End Try
 
-        Dim software As New Software(name, installPath, website, downloadLink, versionString, processes, requiresUninstall, active)
+        Dim software As New Software(TemporaryDirectory, name, installPath, website, downloadLink, installationArguments, versionString, processes, requiresUninstall, active, update)
         Softwares.Add(software)
         Return software
     End Function
 
     Sub downloadDefaultConfiguration()
         Dim webClient As New WebClient()
-        webClient.DownloadFile("https://klar.ddns.net/download/SoftwareUpdater/config.xml", ConfigurationFile.FullName)
+        webClient.DownloadFile("https://raw.githubusercontent.com/MarvinKlar/SoftwareUpdater/master/config.xml", ConfigurationFile.FullName)
         webClient.Dispose()
     End Sub
 
