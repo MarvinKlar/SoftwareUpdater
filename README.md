@@ -8,14 +8,14 @@ You can specifiy the temporary folder (working folder) and the location of the c
 
 The default configuration which comes with a blank installation is already configured to install and update the following softwares:
 > 7-Zip  
+> Acrobat Reader DC  
 > Android Studio  
+> Bitvise SSH Client  
+> Brother MFL-Pro Suite (not silent)  
 
 Planned softwares:
-> Acrobat Reader  
-> Flash Player  
-> Battle.net  
-> Bitvise  
-> ControlCenter  
+> Blizzard Battle.net Gameclient (not silent)
+> Flash Player (not silent)
 > CCleaner  
 > Discord  
 > Dropbox  
@@ -57,6 +57,11 @@ Planned softwares:
 > WhatsApp  
 > Yatqa  
 > Windows Essentials  
+
+Softwares, which can't be installed/updated silently:
+> Flash Player (Requires a enterprise access - which is not allowed to be public, but you can request one - to deploy (the msi installers) silent)  
+> Blizzard Battle.net Gameclient (Does not support a silent installation)  
+> Brother MFL-Pro Suite  
 
 Let me know whats your wish! Contact: marvin.klar@yahoo.de
 
@@ -135,11 +140,13 @@ The ``versionString`` node describes a string, which represents a part of the so
 The application will search for the first occurence of the string on the website and use it to parse the latest version number.
 
 ### The download link
-The ``downloadLink`` node works similar like the ``versionString`` node. The applcation searches for the first occurence of the string on the website and uses it to download the software.
+The ``downloadLink`` node works similar like the ``versionString`` node. The applcation searches for the first occurence of the string on the website and uses it to download the software. If the download link is not on the website, you can simply specify the link and let the application replace the star (``*``) to the latest version. You can also specify the ``versionFormat`` attribute to specify the format of the version of software in the downloadlink. You can use the following varaibles and other chars (like e.g. dots): ``%major% (the major versionumber), %minor% (the minor versionumber), %revision% (the revision number) and %build% (the build number)``  
+With the ``validateVersion`` attribute you can specify, if only valid version numbers should be used for the url. If so, e.g. ``1.09.2`` will be converted to ``1.9.2``. So only deactivate this, if you really want to use the original version of the software from the website.  
+Important: The download link must be a direct download link! If you only have the link of the website, which starts the download, start the download once (you can cancel the download of the software) and then go to you download history in your browser and search for the direct download link of the installer.
 Example:
->``<downloadLink>http://7-zip.org/a/7z*-x64.exe</downloadLink>``
+>``<downloadLink versionFormat="%major%%minor%%revision%%build%" validateVersion="false">http://7-zip.org/a/7z*-x64.exe</downloadLink>``
 
-That's it!
+That's it! Easy, huh?
 
 
 ## Hints for configuring own softwares
@@ -159,7 +166,7 @@ Keep in mind that the website of the software you configure might change. If you
 
 ## Bugs, issues or simply nice ideas
 
-If you have any trouble using the software or missing any feature, let me know about that:  
+If you have any trouble using the software or missing any feature, let me know about that (in english or german):  
 Issues, bugs: https://github.com/MarvinKlar/SoftwareUpdater/issues  
 Questions, feature requests or feedback: marvin.klar@yahoo.de  
 (I commonly respond/react within minutes - it should never take more than 12 hours)  

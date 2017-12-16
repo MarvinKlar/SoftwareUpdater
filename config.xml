@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<softwareUpdater>
+	<softwares>
+	
+		<software active="true">
+			<name>7-Zip</name>
+			<installPath>C:\Program Files\7-Zip\7zG.exe</installPath>
+			<installationArguments>%installationfile% /S</installationArguments>
+			<processes>7zFM,7zG,7z</processes>
+			<website>http://7-zip.de/index.html</website>
+			<versionString>7-Zip * (</versionString>
+			<downloadLink>http://7-zip.org/a/7z*-x64.exe</downloadLink>
+		</software>
+		
+		<software active="true" update="false">
+			<name>Android Studio</name>
+			<installPath>C:\Program Files\Android\Android Studio\bin\studio64.exe</installPath>
+			<installationArguments>%installationfile% /S /Allusers</installationArguments>
+			<processes></processes>
+			<website>https://developer.android.com/studio/index.html</website>
+			<versionString>https://dl.google.com/dl/android/studio/install/*/android-studio-ide-*-windows.exe</versionString>
+			<downloadLink>https://dl.google.com/dl/android/studio/install/*/android-studio-ide-*-windows.exe</downloadLink>
+		</software>
+		
+		<software active="true">
+			<name>Adobe Acrobat Reader DC (German)</name>
+			<installPath>C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe</installPath>
+			<installationArguments>%installationfile% /sAll /rs</installationArguments>
+			<processes>AcroRd32</processes>
+			<website>https://get.adobe.com/de/reader/</website>
+			<versionString>Reader_DC_20*_German_for_Windows</versionString>
+			<downloadLink versionFormat="%major%%minor%%revision%%build%" validateVersion="false">http://ardownload.adobe.com/pub/adobe/reader/win/AcrobatDC/*/AcroRdrDC*_de_DE.exe</downloadLink>
+		</software>
+		
+		<software active="true">
+			<name>Bitvise SSH Client</name>
+			<installPath>C:\Program Files (x86)\Bitvise SSH Client\BvSsh.exe</installPath>
+			<installationArguments>%installationfile% -acceptEULA</installationArguments>
+			<processes>BvSsh,totermw</processes>
+			<website>https://www.bitvise.com/ssh-client-download</website>
+			<versionString>- version *, size</versionString>
+			<downloadLink>https://dl.bitvise.com/BvSshClient-Inst.exe</downloadLink>
+		</software>
+		
+		<software active="true" update="false">
+			<name>Brother MFL-Pro Suite (for MFC-J5910DW)</name>
+			<installPath>C:\Program Files (x86)\Brother\Brmfl11b\Brinstck.exe</installPath>
+			<installationArguments>%installationfile%</installationArguments>
+			<processes>AddrBook,Brinstck,brmfrmss,BrRemPnP,BrScUtil,BrStDvPt,cvtifmax,FAXRX,PCfxDial,PCfxSet,Brolink0,BrLogRx,BrCcBoot,BrCcUxSys,BrCtrlCntr,BrMapiSend,BrTwnAccs,PtProv64</processes>
+			<website>http://support.brother.com/g/b/downloadend.aspx?c=de&amp;lang=de&amp;prod=mfcj5910dw_all&amp;os=93&amp;dlid=dlf004746_000&amp;flang=17&amp;type3=11</website>
+			<versionString>&lt;em&gt;*&lt;br&gt;(C1)&lt;/em&gt;</versionString>
+			<downloadLink>http://download.brother.com/welcome/dlf004746/MFC-J5910DW-inst-C1-eu1.EXE</downloadLink>
+		</software>
+		
+	</softwares>
+</softwareUpdater>

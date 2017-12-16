@@ -87,10 +87,12 @@ Public Class SoftwareManager
 
         Dim name, installPath, website, downloadLink, installationArguments As String
         Dim versionString As String = Nothing
+        Dim versionFormat As String = Nothing
         Dim processes As New List(Of String)
         Dim active As Boolean = True
         Dim requiresUninstall As Boolean = False
         Dim update As Boolean = True
+        Dim validateVersion As Boolean = True
 
         Try
             name = softwareConfiguraion.Item("name").InnerText
@@ -128,7 +130,7 @@ Public Class SoftwareManager
         End Try
 
         Try
-            For Each process As String In softwareConfiguraion.Attributes("processes").InnerText.Split(",")
+            For Each process As String In softwareConfiguraion.Item("processes").InnerText.Split(",")
                 processes.Add(process)
             Next
         Catch ex As Exception
@@ -149,7 +151,17 @@ Public Class SoftwareManager
         Catch ex As Exception
         End Try
 
-        Dim software As New Software(TemporaryDirectory, name, installPath, website, downloadLink, installationArguments, versionString, processes, requiresUninstall, active, update)
+        Try
+            versionFormat = softwareConfiguraion.Item("downloadLink").Attributes("versionFormat").InnerText
+        Catch ex As Exception
+        End Try
+
+        Try
+            validateVersion = Not softwareConfiguraion.Item("downloadLink").Attributes("validateVersion").InnerText.ToLower().Equals("false")
+        Catch ex As Exception
+        End Try
+
+        Dim software As New Software(TemporaryDirectory, name, installPath, website, downloadLink, installationArguments, versionString, processes, requiresUninstall, active, update, versionFormat, validateVersion)
         Softwares.Add(software)
         Return software
     End Function
