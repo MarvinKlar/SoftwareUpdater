@@ -2,7 +2,6 @@
 Imports System.Net
 Imports System.Text.RegularExpressions
 Imports System.Threading
-Imports Microsoft.Win32
 
 Public Class Software
 
@@ -130,7 +129,7 @@ Public Class Software
         End Set
     End Property
 
-    Private _Active As Boolean
+    Private _Active As Boolean = True
     Property Active As Boolean
         Get
             Return _Active
@@ -150,7 +149,7 @@ Public Class Software
         End Set
     End Property
 
-    Private _Update As Boolean
+    Private _Update As Boolean = True
     Property Update As Boolean
         Get
             Return _Update
@@ -180,35 +179,31 @@ Public Class Software
         End Set
     End Property
 
+    Private _OsVersions As New List(Of String)
+    Property OsVersions As List(Of String)
+        Get
+            Return _OsVersions
+        End Get
+        Set(value As List(Of String))
+            _OsVersions = value
+        End Set
+    End Property
+
 #End Region
 
 #Region "constuctors"
 
-    Sub New(temporaryDirectory As DirectoryInfo, name As String, installPath As String, website As String, downloadLink As String, installationArguments As String, Optional versionString As String = Nothing, Optional processes As List(Of String) = Nothing, Optional requiresUninstall As Boolean = False, Optional active As Boolean = True, Optional update As Boolean = True, Optional versionFormat As String = Nothing, Optional validateVersion As Boolean = True)
+    Sub New(temporaryDirectory As DirectoryInfo, name As String, installPath As String, downloadLink As String)
         Me.TemporaryDirectory = temporaryDirectory
 
         Me.Name = name
         Me.InstallPath = installPath
-        Me.InstallationArguments = installationArguments
-
-        Me.Website = website
-
         Me.DownloadLink = downloadLink
-        Me.VersionString = versionString
 
-        Me.VersionFormat = versionFormat
-        Me.ValidateVersion = validateVersion
-
-        Me.Processes = processes
-
-        Me.Active = active
-
-        Me.Update = update
-
-        initialize()
+        Initialize()
     End Sub
 
-    Private Sub initialize()
+    Private Sub Initialize()
         ' Set properties
         If IsNothing(VersionString) Then
             VersionString = DownloadLink
@@ -219,18 +214,37 @@ Public Class Software
 
         ' Get install directory
         If InstallPath.Contains("*") Then
-            Dim folders As String() = InstallPath.Split("\")
+            Dim parts As String() = InstallPath.Split("\")
             Dim resultFolder As String = ""
-            For Each folderPart As String In folders
-                If folderPart.Contains("*") Then
-                    For Each folder As DirectoryInfo In New DirectoryInfo(resultFolder).EnumerateDirectories()
-                        If Regex.IsMatch(folder.Name, Regex.Escape(folderPart).Replace("\*", ".*")) Then
-                            resultFolder = resultFolder & folder.Name
-                            Continue For
-                        End If
-                    Next
+            For Each pathPart As String In parts
+                If pathPart.Equals(parts.GetValue(parts.Length - 1)) Then
+                    If pathPart.Contains("*") Then
+                        For Each installFile As FileInfo In New DirectoryInfo(resultFolder).EnumerateFiles()
+                            If Regex.IsMatch(installFile.Name, Regex.Escape(pathPart).Replace("\*", ".*")) Then
+                                resultFolder &= "\" & installFile.Name
+                                Exit For
+                            End If
+                        Next
+                    Else
+                        resultFolder &= "\" & pathPart
+                    End If
                 Else
-                    resultFolder = resultFolder & folderPart
+                    If pathPart.Contains("*") Then
+                        For Each folder As DirectoryInfo In New DirectoryInfo(resultFolder).EnumerateDirectories()
+                            If Regex.IsMatch(folder.Name, Regex.Escape(pathPart).Replace("\*", ".*")) Then
+                                If Not resultFolder.Equals("") Then
+                                    resultFolder &= "\"
+                                End If
+                                resultFolder &= folder.Name
+                                Exit For
+                            End If
+                        Next
+                    Else
+                        If Not resultFolder.Equals("") Then
+                            resultFolder &= "\"
+                        End If
+                        resultFolder &= pathPart
+                    End If
                 End If
             Next
 
@@ -242,9 +256,9 @@ Public Class Software
         If file.Exists Then
             Dim fileVersionInfo As FileVersionInfo = FileVersionInfo.GetVersionInfo(InstallPath)
             If IsNothing(fileVersionInfo.ProductVersion) Then
-                InstalledVersion = New Version(validateVersionNumber(validateVersionString(fileVersionInfo.FileVersion)))
+                InstalledVersion = New Version(ValidateVersionNumber(ValidateVersionString(fileVersionInfo.FileVersion)))
             Else
-                InstalledVersion = New Version(validateVersionNumber(validateVersionString(fileVersionInfo.ProductVersion)))
+                InstalledVersion = New Version(ValidateVersionNumber(ValidateVersionString(fileVersionInfo.ProductVersion)))
             End If
         End If
 
@@ -255,7 +269,7 @@ Public Class Software
 
 #Region "functions"
 
-    Function hasRunningProcesses() As Boolean
+    Function HasRunningProcesses() As Boolean
         For Each process As Process In Process.GetProcesses
             Dim processName As String = process.ProcessName
             If Processes.Contains(processName) Then
@@ -265,20 +279,25 @@ Public Class Software
         Return False
     End Function
 
-    Sub check()
-        If Active Then
-            LatestVersionString = validateVersionNumber(getStringFromWebsite(VersionString, False))
-            LatestVersion = New Version(LatestVersionString)
+    Sub Check()
+        If ShouldExecute() Then
+            LatestVersionString = ValidateVersionNumber(GetStringFromWebsite(VersionString, False))
+            If Not IsNothing(LatestVersionString) Then
+                LatestVersion = New Version(LatestVersionString)
+            End If
         End If
     End Sub
 
-    Private Function getStringFromWebsite(stringToSearch As String, returnFullString As Boolean) As String
+    Private Function GetStringFromWebsite(stringToSearch As String, returnFullString As Boolean) As String
+        If IsNothing(Website) Or IsNothing(stringToSearch) Then
+            Return Nothing
+        End If
         Dim websiteContent As String = WebClient.DownloadString(Website)
         Dim stringParts As String() = stringToSearch.Split("*")
         Dim firstSearch As String = stringParts.GetValue(0)
         Dim lastSearch As String = stringParts.GetValue(stringParts.Length - 1)
         Dim isValidVersion As Boolean = False
-        getStringFromWebsite = ""
+        GetStringFromWebsite = ""
         Dim versionNumber As String
         Do
             Dim firstIndex As Integer = websiteContent.IndexOf(firstSearch)
@@ -287,119 +306,168 @@ Public Class Software
             End If
             Dim lastIndex As Integer = websiteContent.IndexOf(lastSearch, firstIndex)
 
-            getStringFromWebsite = websiteContent.Substring(firstIndex, lastIndex - firstIndex + lastSearch.Length)
+            GetStringFromWebsite = websiteContent.Substring(firstIndex, lastIndex - firstIndex + lastSearch.Length)
 
             ' Substring websiteContent for next search
             websiteContent = websiteContent.Substring(firstIndex + 1)
 
-            versionNumber = getStringFromWebsite
+            versionNumber = GetStringFromWebsite
             For Each stringPart As String In stringParts
                 versionNumber = versionNumber.Replace(stringPart, "")
             Next
 
             Try
-                Dim testVersion As New Version(validateVersionNumber(versionNumber))
+                Dim testVersion As New Version(ValidateVersionNumber(versionNumber))
                 isValidVersion = True
             Catch ex As Exception
             End Try
 
 
-        Loop Until isValidVersion And Regex.IsMatch(getStringFromWebsite, Regex.Escape(stringToSearch).Replace("\*", ".*"))
+        Loop Until isValidVersion And Regex.IsMatch(GetStringFromWebsite, Regex.Escape(stringToSearch).Replace("\*", ".*"))
         If Not returnFullString Then
-            getStringFromWebsite = versionNumber
+            GetStringFromWebsite = versionNumber
         End If
 
-        Return getStringFromWebsite
+        Return GetStringFromWebsite
     End Function
 
-    Private Function validateVersionString(version As String) As String
+    Private Function ValidateVersionString(version As String) As String
+        If IsNothing(version) Then
+            Return Nothing
+        End If
         version = version.Replace(",", ".").Replace("..", ".")
-        validateVersionString = ""
+        ValidateVersionString = ""
         For Each character As Char In version
             If Regex.IsMatch(character, "\.|[0-9]") Then
-                validateVersionString &= character
+                ValidateVersionString &= character
             End If
         Next
     End Function
 
-    Private Function validateVersionNumber(version As String) As String
-        validateVersionNumber = version
+    Private Function ValidateVersionNumber(version As String) As String
+        If IsNothing(version) Then
+            Return Nothing
+        End If
+        ValidateVersionNumber = version
         Dim versionParts As String() = version.Split(".")
         If versionParts.Length > 4 Then
-            validateVersionNumber = versionParts.GetValue(0) & "." & versionParts.GetValue(1) & "." & versionParts.GetValue(2) & "." & versionParts.GetValue(3)
+            ValidateVersionNumber = versionParts.GetValue(0) & "." & versionParts.GetValue(1) & "." & versionParts.GetValue(2) & "." & versionParts.GetValue(3)
         End If
     End Function
 
-    Sub installSoftware()
-        If Active Then
-            downloadLatestVersion()
+    Sub InstallSoftware()
+        If ShouldExecute() Then
+            DownloadLatestVersion()
 
-            installLatestVersion()
+            InstallLatestVersion()
         End If
     End Sub
 
-    Sub uninstallSoftware()
+    Private Function ShouldExecute() As Boolean
+        If Active Then
+            Dim osVersion As String = GetOsVersion()
+            If OsVersions.Count = 0 Or OsVersions.Contains(osVersion) Then
+                Return True
+            Else
+                Throw New Exception("The software " & Name & " is not for Windows " & osVersion & ".")
+            End If
+        Else
+            Throw New Exception("The software " & Name & " is not activated.")
+        End If
+        Return False
+    End Function
+
+    Sub UninstallSoftware()
         If New FileInfo(InstallPath).Exists Then
             'TODO uninstall via process
         End If
     End Sub
 
-    Sub updateSoftware()
-        If Active Then
+    Sub UpdateSoftware()
+        If ShouldExecute() Then
             If RequiresUninstall Then
-                uninstallSoftware()
+                UninstallSoftware()
             End If
 
-            installSoftware()
+            InstallSoftware()
         End If
     End Sub
 
-    Private Sub downloadLatestVersion()
+    Private Sub DownloadLatestVersion()
         If IsNothing(LatestDownloadLink) Then
-            If IsNothing(VersionFormat) Then
-                LatestDownloadLink = getStringFromWebsite(DownloadLink, True)
+            If IsNothing(LatestVersion) Then
+                LatestDownloadLink = DownloadLink
             Else
-                If ValidateVersion Then
-                    Dim tempVersionFormat As String = VersionFormat.Replace("%major%", LatestVersion.Major).Replace("%minor%", LatestVersion.Minor).Replace("%revision%", LatestVersion.Revision).Replace("%build%", LatestVersion.Build)
-                    LatestDownloadLink = DownloadLink.Replace("*", tempVersionFormat)
+                If IsNothing(VersionFormat) Then
+                    LatestDownloadLink = GetStringFromWebsite(DownloadLink, True)
                 Else
-                    Dim tempVersionFormat As String = VersionFormat
-                    Dim splitedVersionString As String() = LatestVersionString.Split(".")
-                    Try
-                        tempVersionFormat = tempVersionFormat.Replace("%major%", splitedVersionString.GetValue(0))
-                    Catch ex As Exception
-                        tempVersionFormat = tempVersionFormat.Replace("%major%", "")
-                    End Try
-                    Try
-                        tempVersionFormat = tempVersionFormat.Replace("%minor%", splitedVersionString.GetValue(1))
-                    Catch ex As Exception
-                        tempVersionFormat = tempVersionFormat.Replace("%minor%", "")
-                    End Try
-                    Try
-                        tempVersionFormat = tempVersionFormat.Replace("%revision%", splitedVersionString.GetValue(2))
-                    Catch ex As Exception
-                        tempVersionFormat = tempVersionFormat.Replace("%revision%", "")
-                    End Try
-                    Try
-                        tempVersionFormat = tempVersionFormat.Replace("%build%", splitedVersionString.GetValue(3))
-                    Catch ex As Exception
-                        tempVersionFormat = tempVersionFormat.Replace("%build%", "")
-                    End Try
-                    LatestDownloadLink = DownloadLink.Replace("*", tempVersionFormat)
+                    If ValidateVersion Then
+                        Dim tempVersionFormat As String = VersionFormat.Replace("%major%", LatestVersion.Major).Replace("%minor%", LatestVersion.Minor).Replace("%revision%", LatestVersion.Revision).Replace("%build%", LatestVersion.Build)
+                        LatestDownloadLink = DownloadLink.Replace("*", tempVersionFormat)
+                    Else
+                        Dim tempVersionFormat As String = VersionFormat
+                        Dim splitedVersionString As String() = LatestVersionString.Split(".")
+                        Try
+                            tempVersionFormat = tempVersionFormat.Replace("%major%", splitedVersionString.GetValue(0))
+                        Catch ex As Exception
+                            tempVersionFormat = tempVersionFormat.Replace("%major%", "")
+                        End Try
+                        Try
+                            tempVersionFormat = tempVersionFormat.Replace("%minor%", splitedVersionString.GetValue(1))
+                        Catch ex As Exception
+                            tempVersionFormat = tempVersionFormat.Replace("%minor%", "")
+                        End Try
+                        Try
+                            tempVersionFormat = tempVersionFormat.Replace("%revision%", splitedVersionString.GetValue(2))
+                        Catch ex As Exception
+                            tempVersionFormat = tempVersionFormat.Replace("%revision%", "")
+                        End Try
+                        Try
+                            tempVersionFormat = tempVersionFormat.Replace("%build%", splitedVersionString.GetValue(3))
+                        Catch ex As Exception
+                            tempVersionFormat = tempVersionFormat.Replace("%build%", "")
+                        End Try
+                        LatestDownloadLink = DownloadLink.Replace("*", tempVersionFormat)
+                    End If
                 End If
             End If
         End If
 
-        WebClient.DownloadFile(LatestDownloadLink, getFileName())
-        ' LatestDownloadLink = DownloadLink.Replace("*", LatestVersionString)
+        WebClient.DownloadFile(LatestDownloadLink, GetFileName())
     End Sub
 
-    Private Function getFileName() As String
-        getFileName = TemporaryDirectory.FullName & "\" & Name & "_" & LatestVersion.ToString() & LatestDownloadLink.Substring(LatestDownloadLink.Length - 4)
+    Private Function GetFileName() As String
+        'GetFileName = TemporaryDirectory.FullName & "\" & Name
+        'If Not IsNothing(LatestVersion) Then
+        '    GetFileName &= "_" & LatestVersion.ToString()
+        'End If
+        'GetFileName &= LatestDownloadLink.Substring(LatestDownloadLink.Length - 4)
+        Dim parts As String() = LatestDownloadLink.Split("/")
+        Dim fileName As String = parts.GetValue(parts.Length - 1)
+        fileName = fileName.Replace("\", "").Replace("/", "").Replace(":", "").Replace("*", "").Replace("?", "").Replace("""", "").Replace("<", "").Replace(">", "").Replace("|", "")
+        GetFileName = TemporaryDirectory.FullName & "\" & fileName
     End Function
 
-    Private Sub installLatestVersion()
-        Dim fileName As String = getFileName()
+    Private Function GetOsVersion() As String
+        Dim osName As String = My.Computer.Info.OSFullName
+        If osName.Contains("2016") Or osName.Contains("10") Then
+            Return "10"
+        ElseIf osName.Contains("2012 R2") Or osName.Contains("8") Then
+            Return "8"
+        ElseIf osName.Contains("2012") Or osName.Contains("7") Then
+            Return "7"
+        ElseIf osName.Contains("2008") Or osName.Contains("Vista") Then
+            Return "Vista"
+        ElseIf osName.Contains("2003") Or osName.Contains("XP") Then
+            Return "XP"
+        ElseIf osName.Contains("NT") Then
+            Return "NT"
+        End If
+        Return "Unknown"
+    End Function
+
+    Private Sub InstallLatestVersion()
+        Dim fileName As String = GetFileName()
         If fileName.ToLower().EndsWith(".zip") Or fileName.ToLower().EndsWith(".7z") Or fileName.ToLower().EndsWith(".gz") Or fileName.ToLower().EndsWith(".rar") Then
             ' TODO Unzip the installation files first
         End If
@@ -409,9 +477,9 @@ Public Class Software
             Dim startFile As String = InstallationArguments.Split(" ").GetValue(0)
             Dim arguments As String = InstallationArguments.Substring(startFile.Length).Trim()
 
-            Dim startInfo As New ProcessStartInfo
-            startInfo.FileName = startFile.Replace("%installationfile%", installFile.FullName)
-            startInfo.Arguments = arguments.Replace("%installationfile%", installFile.FullName)
+            Dim startInfo As New ProcessStartInfo(startFile.Replace("%installationfile%", installFile.FullName), arguments.Replace("%installationfile%", installFile.FullName)) With {
+                .UseShellExecute = False
+            }
             Dim process As Process = Process.Start(startInfo)
             While Not process.HasExited
                 Thread.Sleep(1000)

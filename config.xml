@@ -12,18 +12,9 @@
 			<downloadLink>http://7-zip.org/a/7z*-x64.exe</downloadLink>
 		</software>
 		
-		<software active="true" update="false">
-			<name>Android Studio</name>
-			<installPath>C:\Program Files\Android\Android Studio\bin\studio64.exe</installPath>
-			<installationArguments>%installationfile% /S /Allusers</installationArguments>
-			<processes></processes>
-			<website>https://developer.android.com/studio/index.html</website>
-			<versionString>https://dl.google.com/dl/android/studio/install/*/android-studio-ide-*-windows.exe</versionString>
-			<downloadLink>https://dl.google.com/dl/android/studio/install/*/android-studio-ide-*-windows.exe</downloadLink>
-		</software>
-		
 		<software active="true">
 			<name>Adobe Acrobat Reader DC (German)</name>
+			<osVersion>7,8,10</osVersion>
 			<installPath>C:\Program Files (x86)\Adobe\Acrobat Reader DC\Reader\AcroRd32.exe</installPath>
 			<installationArguments>%installationfile% /sAll /rs</installationArguments>
 			<processes>AcroRd32</processes>
@@ -42,14 +33,99 @@
 			<downloadLink>https://dl.bitvise.com/BvSshClient-Inst.exe</downloadLink>
 		</software>
 		
+		<software active="true">
+			<name>CCleaner free</name>
+			<installPath>C:\Program Files\CCleaner\CCleaner64.exe</installPath>
+			<installationArguments>%installationfile% /S</installationArguments>
+			<processes>CCleaner64</processes>
+			<website>https://www.piriform.com/ccleaner/version-history</website>
+			<versionString>CCleaner v*&lt;/a&gt;</versionString>
+			<downloadLink versionFormat="%major%%minor%">http://download.piriform.com/ccsetup*.exe</downloadLink>
+		</software>
+		
+		<software active="true">
+			<name>Android Studio</name>
+			<osVersion>7,8,10</osVersion>
+			<installPath>C:\Program Files\Android\Android Studio\bin\studio64.exe</installPath>
+			<installationArguments>%installationfile% /S /Allusers</installationArguments>
+			<processes>studio64</processes>
+			<website>https://developer.android.com/studio/releases/index.html</website>
+			<versionString>">* (</versionString>
+			<downloadLink>https://dl.google.com/dl/android/studio/install/*/android-studio-ide-*-windows.exe</downloadLink>
+		</software>
+		
+		<software active="true">
+			<name>Dropbox</name>
+			<osVersion>7,8,10</osVersion>
+			<installPath>C:\Program Files (x86)\Dropbox\Client\Dropbox.exe</installPath>
+			<installationArguments>%installationfile% /S</installationArguments>
+			<processes>Dropbox</processes>
+			<website>https://www.dropboxforum.com/t5/Desktop-client-builds/bd-p/101003016</website>
+			<versionString>&gt;Stable Build *&lt;/a&gt;</versionString>
+			<downloadLink>https://dl-web.dropbox.com/installer?authenticode_sign=True&amp;build_no=*&amp;juno=True&amp;juno_use_program_files=True&amp;plat=win&amp;tag=eyJUQUdTIjoiZUp5clZpcE9MUzdPek0tTHoweFJzbEl3TkRFME1ERTBNakkydHJBME1yZXdNRFkyTXpFM01EVXhNell5TXpNME5ESXdNRFUzTVRDdUJRQ25lQTJrQE1FVEEifQ&amp;tag_token=AIwc8dMsn2dRnhLSlBpG4P8atqe8oGv9cBYiMYCocyYJlA</downloadLink>
+		</software>
+		
+		<!-- Not silent: -->
+		
+		<software active="true">
+			<name>Adobe Flash Player for Chrome</name>
+			<installPath>C:\Windows\SysWOW64\Macromed\Flash\FlashUtil*_pepper.exe</installPath>
+			<installationArguments>%installationfile%</installationArguments>
+			<processes>chrome</processes>
+			<website>https://get.adobe.com/de/flashplayer/</website>
+			<versionString>&lt;strong&gt;Version *&lt;/strong&gt;</versionString>
+			<downloadLink versionFormat="%major%">https://admdownload.adobe.com/bin/live/flashplayer*pp_xa_install.exe</downloadLink>
+		</software>
+		
+		<software active="true">
+			<name>Adobe Flash Player for Opera</name>
+			<installPath>C:\Windows\SysWOW64\Macromed\Flash\FlashUtil*_pepper.exe</installPath>
+			<installationArguments>%installationfile%</installationArguments>
+			<processes>opera</processes>
+			<website>https://get.adobe.com/de/flashplayer/</website>
+			<versionString>&lt;strong&gt;Version *&lt;/strong&gt;</versionString>
+			<downloadLink versionFormat="%major%">https://admdownload.adobe.com/bin/live/flashplayer*pp_xa_install.exe</downloadLink>
+		</software>
+		
+		<software active="true">
+			<name>Adobe Flash Player for Firefox</name>
+			<installPath>C:\Windows\SysWOW64\Macromed\Flash\FlashUtil*_Plugin.exe</installPath>
+			<installationArguments>%installationfile%</installationArguments>
+			<processes>firefox</processes>
+			<website>https://get.adobe.com/de/flashplayer/</website>
+			<versionString>&lt;strong&gt;Version *&lt;/strong&gt;</versionString>
+			<downloadLink versionFormat="%major%">https://admdownload.adobe.com/bin/live/flashplayer*_xa_install.exe</downloadLink>
+		</software>
+		
+		<software active="true">
+			<name>Adobe Flash Player for Internet Explorer</name>
+			<osVersion>XP,Vista,7</osVersion>
+			<installPath>C:\Windows\SysWOW64\Macromed\Flash\FlashUtil*_ActiveX.exe</installPath>
+			<installationArguments>%installationfile%</installationArguments>
+			<processes>iexplore</processes>
+			<website>https://get.adobe.com/de/flashplayer/</website>
+			<versionString>&lt;strong&gt;Version *&lt;/strong&gt;</versionString>
+			<downloadLink versionFormat="%major%">https://admdownload.adobe.com/bin/live/flashplayer*ax_xa_install.exe</downloadLink>
+		</software>
+		
+		<!-- Not silent and without updates: -->
+		
 		<software active="true" update="false">
-			<name>Brother MFL-Pro Suite (for MFC-J5910DW)</name>
+			<name>Brother MFL-Pro Suite for MFC-J5910DW</name>
 			<installPath>C:\Program Files (x86)\Brother\Brmfl11b\Brinstck.exe</installPath>
 			<installationArguments>%installationfile%</installationArguments>
 			<processes>AddrBook,Brinstck,brmfrmss,BrRemPnP,BrScUtil,BrStDvPt,cvtifmax,FAXRX,PCfxDial,PCfxSet,Brolink0,BrLogRx,BrCcBoot,BrCcUxSys,BrCtrlCntr,BrMapiSend,BrTwnAccs,PtProv64</processes>
 			<website>http://support.brother.com/g/b/downloadend.aspx?c=de&amp;lang=de&amp;prod=mfcj5910dw_all&amp;os=93&amp;dlid=dlf004746_000&amp;flang=17&amp;type3=11</website>
 			<versionString>&lt;em&gt;*&lt;br&gt;(C1)&lt;/em&gt;</versionString>
 			<downloadLink>http://download.brother.com/welcome/dlf004746/MFC-J5910DW-inst-C1-eu1.EXE</downloadLink>
+		</software>
+		
+		<software active="true" update="false">
+			<name>Blizzard Battle.net Gameclient</name>
+			<installPath>C:\Program Files\Epic Games\Launcher\Engine\Binaries\Win32\EpicGamesLauncher.exe</installPath>
+			<installationArguments>%installationfile%</installationArguments>
+			<processes>EpicGamesLauncher</processes>
+			<downloadLink>https://eu.battle.net/download/getInstaller?os=win&amp;installer=Battle.net-Setup.exe</downloadLink>
 		</software>
 		
 	</softwares>

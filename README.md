@@ -8,17 +8,16 @@ You can specifiy the temporary folder (working folder) and the location of the c
 
 The default configuration which comes with a blank installation is already configured to install and update the following softwares:
 > 7-Zip  
-> Acrobat Reader DC  
+> Adobe Acrobat Reader DC  
+> Adobe Flash Player (not silent)  
 > Android Studio  
 > Bitvise SSH Client  
-> Brother MFL-Pro Suite (not silent)  
+> Blizzard Battle.net Gameclient (not silent and without updates)  
+> Brother MFL-Pro Suite (not silent and without updates)  
+> CCleaner free  
+> Dropbox  
 
 Planned softwares:
-> Blizzard Battle.net Gameclient (not silent)
-> Flash Player (not silent)
-> CCleaner  
-> Discord  
-> Dropbox  
 > Easy2Sync  
 > Epic Games Launcher
 > FileZilla  
@@ -61,7 +60,8 @@ Planned softwares:
 Softwares, which can't be installed/updated silently:
 > Flash Player (Requires a enterprise access - which is not allowed to be public, but you can request one - to deploy (the msi installers) silent)  
 > Blizzard Battle.net Gameclient (Does not support a silent installation)  
-> Brother MFL-Pro Suite  
+> Brother MFL-Pro Suite (Doesn't share the latest version information - I don't know if they even publish updates)  
+> Discord  (Doesn't share the latest verion information and has a pretty ugly installation)
 
 Let me know whats your wish! Contact: marvin.klar@yahoo.de
 
@@ -116,6 +116,11 @@ The ``name`` attribute is just for you to know which software you configure righ
 Example:
 >``<name>7-Zip</name>``
 
+### The operating system version
+The ``osVersion`` node defines a comma seperated list of supported operating systems (Windows version). Possible values: ``NT, XP, Vista, 7, 8 and 10``  
+Example:
+>``<osVersion>7,8,10</osVersion>``
+
 ### The local installation of the software
 The ``installPath`` node is needed for the application to know, which version of the software is currently installed. Provide the path of the application (included the application filename itself).  
 Example:
@@ -158,9 +163,10 @@ Keep in mind that the website of the software you configure might change. If you
 
 ## Planned implementations
 - Logging
-- Possiblity to configure params of the installer of the softwares
-- Language support
-- Possiblity to configure the way to get the installed version of the software (productversion, fileversion, registry)
+- Language support - if needed
+- Possiblity to configure the way to get the installed version of the software (productversion, fileversion, registry) - if needed
+- Unzip zipped installers first - if needed
+- Uninstall possibility - if needed
 
 
 

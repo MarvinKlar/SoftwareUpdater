@@ -70,29 +70,22 @@ Public Class SoftwareManager
 
 #Region "functions"
 
-    Sub loadConfiguration()
+    Sub LoadConfiguration()
         Dim fileStream As New FileStream(ConfigurationFile.FullName, FileMode.Open, FileAccess.Read)
         Configuration.Load(fileStream)
         fileStream.Close()
 
         _SoftwareConfigurations = Configuration.Item("softwareUpdater").Item("softwares").GetElementsByTagName("software")
 
-        TemporaryDirectory.create()
+        TemporaryDirectory.Create()
     End Sub
 
-    Function loadSoftware(softwareConfiguraion As XmlNode) As Software
+    Function LoadSoftware(softwareConfiguraion As XmlNode) As Software
         If IsNothing(SoftwareConfigurations) Then
             Throw New Exception("The configuration was not loaded yet!")
         End If
 
-        Dim name, installPath, website, downloadLink, installationArguments As String
-        Dim versionString As String = Nothing
-        Dim versionFormat As String = Nothing
-        Dim processes As New List(Of String)
-        Dim active As Boolean = True
-        Dim requiresUninstall As Boolean = False
-        Dim update As Boolean = True
-        Dim validateVersion As Boolean = True
+        Dim name, installPath, downloadLink As String
 
         Try
             name = softwareConfiguraion.Item("name").InnerText
@@ -107,66 +100,79 @@ Public Class SoftwareManager
         End Try
 
         Try
-            website = softwareConfiguraion.Item("website").InnerText
-        Catch ex As Exception
-            Throw New Exception("The website node is missing (name=" & name & ")")
-        End Try
-
-        Try
             downloadLink = softwareConfiguraion.Item("downloadLink").InnerText
         Catch ex As Exception
             Throw New Exception("The downloadLink node is missing (name=" & name & ")")
         End Try
 
-        Try
-            installationArguments = softwareConfiguraion.Item("installationArguments").InnerText
-        Catch ex As Exception
-            Throw New Exception("The installationArguments node is missing (name=" & name & ")")
-        End Try
+        Dim software As New Software(TemporaryDirectory, name, installPath, downloadLink)
 
         Try
-            versionString = softwareConfiguraion.Item("versionString").InnerText
+            software.VersionString = softwareConfiguraion.Item("versionString").InnerText
         Catch ex As Exception
         End Try
 
         Try
+            software.Website = softwareConfiguraion.Item("website").InnerText
+        Catch ex As Exception
+        End Try
+
+        Try
+            software.InstallationArguments = softwareConfiguraion.Item("installationArguments").InnerText
+        Catch ex As Exception
+        End Try
+
+        Try
+            Dim processes As New List(Of String)
             For Each process As String In softwareConfiguraion.Item("processes").InnerText.Split(",")
                 processes.Add(process)
             Next
+            software.Processes = processes
         Catch ex As Exception
         End Try
 
         Try
-            requiresUninstall = softwareConfiguraion.Attributes("requiresUninstall").InnerText.ToLower().Equals("true")
+            software.RequiresUninstall = softwareConfiguraion.Attributes("requiresUninstall").InnerText.ToLower().Equals("true")
         Catch ex As Exception
         End Try
 
         Try
-            update = softwareConfiguraion.Attributes("update").InnerText.ToLower().Equals("true")
+            software.Update = softwareConfiguraion.Attributes("update").InnerText.ToLower().Equals("true")
         Catch ex As Exception
         End Try
 
         Try
-            active = softwareConfiguraion.Attributes("active").InnerText.ToLower().Equals("true")
+            software.Active = softwareConfiguraion.Attributes("active").InnerText.ToLower().Equals("true")
         Catch ex As Exception
         End Try
 
         Try
-            versionFormat = softwareConfiguraion.Item("downloadLink").Attributes("versionFormat").InnerText
+            software.VersionFormat = softwareConfiguraion.Item("downloadLink").Attributes("versionFormat").InnerText
         Catch ex As Exception
         End Try
 
         Try
-            validateVersion = Not softwareConfiguraion.Item("downloadLink").Attributes("validateVersion").InnerText.ToLower().Equals("false")
+            software.ValidateVersion = Not softwareConfiguraion.Item("downloadLink").Attributes("validateVersion").InnerText.ToLower().Equals("false")
         Catch ex As Exception
         End Try
 
-        Dim software As New Software(TemporaryDirectory, name, installPath, website, downloadLink, installationArguments, versionString, processes, requiresUninstall, active, update, versionFormat, validateVersion)
+
+        Try
+            Dim osVersions As New List(Of String)
+            For Each osVersion As String In softwareConfiguraion.Item("osVersion").InnerText.Split(",")
+                osVersions.Add(osVersion)
+            Next
+            software.OsVersions = osVersions
+        Catch ex As Exception
+        End Try
+
+
+
         Softwares.Add(software)
         Return software
     End Function
 
-    Sub downloadDefaultConfiguration()
+    Sub DownloadDefaultConfiguration()
         Dim webClient As New WebClient()
         webClient.DownloadFile("https://raw.githubusercontent.com/MarvinKlar/SoftwareUpdater/master/config.xml", ConfigurationFile.FullName)
         webClient.Dispose()

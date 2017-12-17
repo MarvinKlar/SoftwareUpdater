@@ -105,7 +105,7 @@ Public Class Main
             End If
         End If
 
-        currentTask = New Thread(AddressOf installAndUpdate)
+        currentTask = New Thread(AddressOf InstallAndUpdate)
         currentTask.Start()
     End Sub
 
@@ -129,71 +129,67 @@ Public Class Main
         End If
     End Sub
 
-    Private Sub installAndUpdate()
+    Private Sub InstallAndUpdate()
         Try
-            setCurrentAction("Loading configuration file...")
+            SetCurrentAction("Loading configuration file...")
             SoftwareManager = New SoftwareManager(TemporaryDirectory, ConfigurationFile)
 
             If Not SoftwareManager.ConfigurationFile.Exists Then
-                addResultMessage("Configuration file '" & SoftwareManager.ConfigurationFile.FullName & "' was not found.")
-                SoftwareManager.downloadDefaultConfiguration()
-                addResultMessage("Downloaded the default configuration file.")
+                AddResultMessage("Configuration file '" & SoftwareManager.ConfigurationFile.FullName & "' was not found.")
+                SoftwareManager.DownloadDefaultConfiguration()
+                AddResultMessage("Downloaded the default configuration file.")
             End If
 
-            setCurrentAction("Loading configured softwares...")
+            SetCurrentAction("Loading configured softwares...")
             Try
-                SoftwareManager.loadConfiguration()
+                SoftwareManager.LoadConfiguration()
             Catch ex As Exception
-                addResultMessage("Unable to load the configuration: " & ex.Message)
+                AddResultMessage("Unable to load the configuration: " & ex.Message)
             End Try
-            addResultMessage("Loaded " & SoftwareManager.SoftwareConfigurations.Count & " softwares to check.")
-            setActionsToProgress(SoftwareManager.SoftwareConfigurations.Count * 3)
+            AddResultMessage("Loaded " & SoftwareManager.SoftwareConfigurations.Count & " softwares to check.")
+            SetActionsToProgress(SoftwareManager.SoftwareConfigurations.Count * 3)
 
-            setCurrentAction("Checking the configured softwares...")
+            SetCurrentAction("Checking the configured softwares...")
             Dim counter As Integer = 1
             For Each softwareConfiguration As XmlNode In SoftwareManager.SoftwareConfigurations
                 Try
-                    setCurrentAction("Checking the " & counter & ". software...")
-                    SoftwareManager.loadSoftware(softwareConfiguration)
-                    addProgress()
+                    SetCurrentAction("Checking the " & counter & ". software...")
+                    SoftwareManager.LoadSoftware(softwareConfiguration)
+                    AddProgress()
                     counter += 1
                 Catch ex As Exception
-                    addResultMessage("Unable to load a software configuration: " & ex.Message)
+                    AddResultMessage("Unable to load a software configuration: " & ex.Message)
                 End Try
             Next
 
-            setCurrentAction("Checking the softwares...")
+            SetCurrentAction("Checking the softwares...")
             For Each software As Software In SoftwareManager.Softwares
                 Try
-                    setCurrentAction("Checking the software " & software.Name & "...")
-                    software.check()
+                    SetCurrentAction("Checking the software " & software.Name & "...")
+                    software.Check()
                 Catch ex As Exception
-                    addResultMessage("Unable to check the software " & software.Name & ": " & ex.Message)
+                    AddResultMessage("Unable to check the software " & software.Name & ": " & ex.Message)
                 End Try
-                addProgress()
+                AddProgress()
 
                 If IsNothing(software.InstalledVersion) Then
                     Try
-                        If IsNothing(software.LatestVersion) Then
-                            addResultMessage("Unable to install the software " & software.Name & ": The latest version could not be detected. Check your configuration.")
-                        Else
-                            setCurrentAction("Installing the software " & software.Name & " version " & software.LatestVersion.ToString() & "...")
-                            software.installSoftware()
-                            addResultMessage("Installed the software " & software.Name & " version " & software.LatestVersion.ToString() & ".")
-                        End If
+                        SetCurrentAction("Installing the software " & software.Name & If(IsNothing(software.LatestVersion), "", " version " & software.LatestVersion.ToString()) & "...")
+                        software.InstallSoftware()
+                        AddResultMessage("Installed the software " & software.Name & If(IsNothing(software.LatestVersion), "", " version " & software.LatestVersion.ToString()) & ".")
                     Catch ex As Exception
-                        addResultMessage("Unable to install the software " & software.Name & ": " & ex.Message)
+                        AddResultMessage("Unable to install the software " & software.Name & ": " & ex.Message)
                     End Try
                 Else
                     If software.Update Then
                         If software.LatestVersion > software.InstalledVersion Then
                             Try
                                 If IsNothing(software.LatestVersion) Then
-                                    addResultMessage("Unable to update the software " & software.Name & ": The latest version could not be detected. Check your configuration.")
+                                    AddResultMessage("Unable to update the software " & software.Name & ": The latest version could not be detected. Check your configuration.")
                                 Else
-                                    While software.hasRunningProcesses()
+                                    While software.HasRunningProcesses()
                                         If SilentMode Then
-                                            addResultMessage("The software " & software.Name & " has running processes and the application is started in silent mode. Skipping the update.")
+                                            AddResultMessage("The software " & software.Name & " has running processes and the application is started in silent mode. Skipping the update.")
                                             GoTo finishUpdate
                                         Else
                                             Dim result As MsgBoxResult = MsgBox("The software " & software.Name & " want to be updated but is currently open. Please close the software and make sure that the following processes are closed: " & vbNewLine & "- " & String.Join(vbNewLine & "- ", software.Processes), MsgBoxStyle.RetryCancel, software.Name & " update")
@@ -202,54 +198,54 @@ Public Class Main
                                             End If
                                         End If
                                     End While
-                                    setCurrentAction("Updating the software " & software.Name & " from version " & software.InstalledVersion.ToString() & " to version " & software.LatestVersion.ToString() & "...")
-                                    software.updateSoftware()
-                                    addResultMessage("Updated the software " & software.Name & " from version " & software.InstalledVersion.ToString() & " to version " & software.LatestVersion.ToString() & ".")
+                                    SetCurrentAction("Updating the software " & software.Name & " from version " & software.InstalledVersion.ToString() & " to version " & software.LatestVersion.ToString() & "...")
+                                    software.UpdateSoftware()
+                                    AddResultMessage("Updated the software " & software.Name & " from version " & software.InstalledVersion.ToString() & " to version " & software.LatestVersion.ToString() & ".")
                                 End If
                             Catch ex As Exception
-                                addResultMessage("Unable to update the software " & software.Name & ": " & ex.Message)
+                                AddResultMessage("Unable to update the software " & software.Name & ": " & ex.Message)
                             End Try
                         Else
-                            addResultMessage("The software " & software.Name & " is already up to date.")
+                            AddResultMessage("The software " & software.Name & " is already up to date.")
                         End If
                     Else
-                        addResultMessage("The updates are disabled for the software " & software.Name & ".")
+                        AddResultMessage("The updates are disabled for the software " & software.Name & ".")
                     End If
                 End If
-finishUpdate:   addProgress()
+finishUpdate:   AddProgress()
 
             Next
 
         Catch ex As Exception
-            addResultMessage("Unexpected exception: " & ex.Message)
+            AddResultMessage("Unexpected exception: " & ex.Message)
         End Try
 
-        finish()
+        Finish()
     End Sub
 
-    Private Sub finish()
+    Private Sub Finish()
         If SilentMode Then
             Me.Invoke(Sub()
                           Me.Close()
                       End Sub)
         Else
             currentTask = Nothing
-            setActionsToProgress(1)
-            addProgress()
-            addResultMessage("Done")
+            SetActionsToProgress(1)
+            AddProgress()
+            AddResultMessage("Done")
         End If
     End Sub
 
-    Public Sub addResultMessage(message As String)
+    Public Sub AddResultMessage(message As String)
         If Not SilentMode Then
             results.Invoke(Sub()
                                results.Text &= vbNewLine & message
                            End Sub)
-            setCurrentAction(message)
+            SetCurrentAction(message)
         End If
     End Sub
 
-    Public Sub setCurrentAction(message As String)
+    Public Sub SetCurrentAction(message As String)
         If Not SilentMode Then
             currentAction.Invoke(Sub()
                                      currentAction.Text = message
@@ -257,7 +253,7 @@ finishUpdate:   addProgress()
         End If
     End Sub
 
-    Public Sub setActionsToProgress(actionsToProgress As Integer)
+    Public Sub SetActionsToProgress(actionsToProgress As Integer)
         If Not SilentMode Then
             progressBar.Invoke(Sub()
                                    progressBar.Step = 1
@@ -266,7 +262,7 @@ finishUpdate:   addProgress()
         End If
     End Sub
 
-    Public Sub addProgress()
+    Public Sub AddProgress()
         If Not SilentMode Then
             progressBar.Invoke(Sub()
                                    progressBar.PerformStep()
