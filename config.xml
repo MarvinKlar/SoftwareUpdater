@@ -65,6 +65,92 @@
 			<downloadLink>https://dl-web.dropbox.com/installer?authenticode_sign=True&amp;build_no=*&amp;juno=True&amp;juno_use_program_files=True&amp;plat=win&amp;tag=eyJUQUdTIjoiZUp5clZpcE9MUzdPek0tTHoweFJzbEl3TkRFME1ERTBNakkydHJBME1yZXdNRFkyTXpFM01EVXhNell5TXpNME5ESXdNRFUzTVRDdUJRQ25lQTJrQE1FVEEifQ&amp;tag_token=AIwc8dMsn2dRnhLSlBpG4P8atqe8oGv9cBYiMYCocyYJlA</downloadLink>
 		</software>
 		
+		<software active="true">
+			<name>Easy2Sync Business</name>
+			<installPath>C:\Program Files (x86)\Easy2Sync\Easy2Sync64Bit.exe</installPath>
+			<installationArguments>%installationfile%</installationArguments>
+			<processes>Easy2Sync64Bit,Easy2Sync</processes>
+			<website>https://www.itsth.de/de/produkte/easy2sync_down.php</website>
+			<versionString>&lt;b&gt;*&lt;/b&gt;</versionString>
+			<downloadLink>http://www.itsth.de/download/licensed/3fade2d44de25e72670f45f8782f9a828e9769b1f2d1de05d47c7bd057eecf9b/Easy2SyncD_Business.exe</downloadLink>
+		</software>
+		
+		<software active="true">
+			<name>GIMP 2</name>
+			<installPath>C:\Program Files\GIMP 2\bin\gimp-*.exe</installPath>
+			<installationArguments>%installationfile% /VERYSILENT /NORESTART /MERGETASKS="!desktopicon"</installationArguments>
+			<processes>gimp-*</processes>
+			<website>https://www.gimp.org/</website>
+			<versionString>&lt;span id=&apos;ver&apos;&gt;*&lt;/span&gt;</versionString>
+			<downloadLink>https://download.gimp.org/mirror/pub/gimp/v2.8/windows/gimp-*-setup.exe</downloadLink>
+		</software>
+		
+		<!-- TODO (deactivated): Error 403 from FileZilla website - Maybe the client is blocked? -->
+		<software active="false">
+			<name>FileZilla</name>
+			<installPath>C:\Program Files\FileZilla FTP Client\filezilla.exe</installPath>
+			<installationArguments>%installationfile% /S /user=all</installationArguments>
+			<processes>filezilla</processes>
+			<website>https://filezilla-project.org/download.php</website>
+			<versionString>&lt;p&gt;The latest stable version of FileZilla Client is *&lt;/p&gt;</versionString>
+			<downloadLink>https://download.filezilla-project.org/client/FileZilla_*_win64-setup_bundled.exe</downloadLink>
+		</software>
+		
+		<!-- TODO (deactivated): The version can not be detected correctly from the website -->
+		<software active="false">
+			<name>Git</name>
+			<installPath>C:\Program Files\Git\git-bash.exe</installPath>
+			<installationArguments>%installationfile% /VERYSILENT</installationArguments>
+			<processes>git-bash,git-gui,git,git-cmd</processes>
+			<website>https://git-scm.com/</website>
+			<versionString>data-win=&quot;*&quot;</versionString>
+			<downloadLink>https://github.com/git-for-windows/git/releases/download/v*.windows.2/Git-*.2-64-bit.exe</downloadLink>
+		</software>
+		
+		<!-- TODO (deactivated): The version can not be detected correctly from the website, because the website need to load some javascript -->
+		<software active="false">
+			<name>Google Chrome</name>
+			<installPath>C:\Program Files (x86)\Google\Chrome\Application\chrome.exe</installPath>
+			<installationArguments>Msiexec /I %installationfile% /q</installationArguments>
+			<processes>chrome</processes>
+			<website wait="3">https://enterprise.google.com/intl/de/chrome/chrome-browser/</website>
+			<versionString>&lt;span ng-bind=&quot;win64Version&quot; class=&quot;ng-binding&quot;&gt;*&lt;/span&gt;</versionString>
+			<downloadLink>https://dl.google.com/tag/s/appguid%3D%7B8A69D345-D564-463C-AFF1-A69D9E530F96%7D%26iid%3D%7BA3DBB9B6-B18F-D0FF-EB93-91DD21F6390F%7D%26lang%3Den%26browser%3D4%26usagestats%3D0%26appname%3DGoogle%2520Chrome%26needsadmin%3Dtrue%26ap%3Dx64-stable%26brand%3DGCEA/dl/chrome/install/googlechromestandaloneenterprise64.msi</downloadLink>
+		</software>
+		
+		<!-- TODO (deactivated): Use the direct download link (not the one from the website) -->
+		<software active="false">
+			<name>HeidiSQL</name>
+			<installPath>C:\Program Files (x86)\HeidiSQL\heidisql.exe</installPath>
+			<installationArguments>%installationfile% /VERYSILENT /SP- /SUPPRESSMSGBOXES /NORESTART</installationArguments>
+			<processes>heidisql</processes>
+			<website>https://www.heidisql.com/download.php</website>
+			<versionString>&lt;label&gt;Revision&lt;br /&gt;*&lt;/label&gt;</versionString>
+			<downloadLink>https://www.heidisql.com/installers/HeidiSQL_*_Setup.exe</downloadLink>
+		</software>
+		
+		<!-- TODO (deactivated): Use the direct download link (not the one from the website) -->
+		<software active="false">
+			<name>KeePass 2</name>
+			<installPath>C:\Program Files (x86)\KeePass Password Safe 2\KeePass.exe</installPath>
+			<installationArguments>%installationfile% /VERYSILENT</installationArguments>
+			<processes>KeePass</processes>
+			<website>https://keepass.info/download.html</website>
+			<versionString>&lt;th colspan=&quot;2&quot;&gt;KeePass *&lt;/th&gt;</versionString>
+			<downloadLink>https://kent.dl.sourceforge.net/project/keepass/KeePass%202.x/*/KeePass-*-Setup.exe</downloadLink>
+		</software>
+		
+		<!-- TODO (deactivated): The website does not contain the version string... -->
+		<software active="false">
+			<name>Mozilla Firefox</name>
+			<installPath>C:\Program Files (x86)\Mozilla Firefox\firefox.exe</installPath>
+			<installationArguments>%installationfile% -ms</installationArguments>
+			<processes>firefox</processes>
+			<website>https://www.mozilla.org/de/firefox/new/</website>
+			<versionString>data-latest-firefox=&quot;*&quot;</versionString>
+			<downloadLink>https://download-installer.cdn.mozilla.net/pub/firefox/releases/*/win64/de/Firefox%20Setup%20*.exe</downloadLink>
+		</software>
+		
 		<!-- Not silent: -->
 		
 		<software active="true">
@@ -106,6 +192,24 @@
 			<website>https://get.adobe.com/de/flashplayer/</website>
 			<versionString>&lt;strong&gt;Version *&lt;/strong&gt;</versionString>
 			<downloadLink versionFormat="%major%">https://admdownload.adobe.com/bin/live/flashplayer*ax_xa_install.exe</downloadLink>
+		</software>
+		
+		<!-- No updates-->
+		
+		<software active="true" update="false">
+			<name>Minecraft</name>
+			<installPath>C:\Program Files (x86)\Minecraft\MinecraftLauncher.exe</installPath>
+			<installationArguments>%installationfile% /qn /quiet /NORESTART</installationArguments>
+			<processes>MinecraftLauncher</processes>
+			<downloadLink>https://launcher.mojang.com/download/MinecraftInstaller.msi</downloadLink>
+		</software>
+		
+		<software active="true" update="false">
+			<name>Epic Games Launcher</name>
+			<installPath>C:\Program Files\Epic Games\Launcher\Portal\Binaries\Win32\EpicGamesLauncher.exe</installPath>
+			<installationArguments>msiexec.exe /I &quot;%installationfile%&quot; /qn /quiet /norestart</installationArguments>
+			<processes>EpicGamesLauncher</processes>
+			<downloadLink>https://launcher-public-service-prod06.ol.epicgames.com/launcher/api/installer/download/EpicGamesLauncherInstaller.msi</downloadLink>
 		</software>
 		
 		<!-- Not silent and without updates: -->

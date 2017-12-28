@@ -16,18 +16,20 @@ The default configuration which comes with a blank installation is already confi
 > Brother MFL-Pro Suite (not silent and without updates)  
 > CCleaner free  
 > Dropbox  
+> Easy2Sync (not silent)  
+> Epic Games Launcher (no updates)  
+> GIMP  
+> Minecraft  
 
 Planned softwares:
-> Easy2Sync  
-> Epic Games Launcher
-> FileZilla  
-> GIMP  
-> Git  
-> Chrome  
-> HeidiSQL  
+> FileZilla (in progress)  
+> Firefox (in progress)  
+> Git (in progress)  
+> Chrome (in progress)  
+> HeidiSQL (in progress)  
 > IrfanView  
 > JRE & JDK  
-> KeePass  
+> KeePass (in progress)  
 > League of Legends  
 > Lightshot  
 > .NET Framework  
@@ -36,8 +38,6 @@ Planned softwares:
 > SQL Server Management Studio  
 > Visual Studio 2017 Enterprise  
 > Visual Studio Code  
-> Minecraft  
-> Firefox  
 > Nmap  
 > Notepad++  
 > OpenVPN  
@@ -73,7 +73,7 @@ You can download the latest stable build of the application here:
 https://klar.ddns.net/download/SoftwareUpdater/SoftwareUpdater.exe  
 
 And the default configuration here (the application downloads and uses the default configuration, if no other configutaion is defined):  
-https://klar.ddns.net/download/SoftwareUpdater/config.xml  
+https://raw.githubusercontent.com/MarvinKlar/SoftwareUpdater/master/config.xml
 
 
 
@@ -162,10 +162,13 @@ Keep in mind that the website of the software you configure might change. If you
 
 
 ## Planned implementations
+- Use the direct download link (only replace the version), if the link is not on website
+- Unzip zipped installers first
+- Wildcard for processes (e.g. gimp-* will trigger gimp-2.8)
+- Wait a few seconds before parsing the website, because some pages need a bit to load all javascript (wait attribute at website node)
 - Logging
 - Language support - if needed
 - Possiblity to configure the way to get the installed version of the software (productversion, fileversion, registry) - if needed
-- Unzip zipped installers first - if needed
 - Uninstall possibility - if needed
 
 
