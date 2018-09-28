@@ -1,4 +1,7 @@
 # SoftwareUpdater
+
+[![Build status](https://ci.appveyor.com/api/projects/status/g5a6p8d7h49nnap0/branch/master?svg=true)](https://ci.appveyor.com/project/MarvinKlar/softwareupdater/branch/master)
+
 Application for Windows which installs configured software silently and keeps it up to date!  
 
 If you don't run the application in silent mode, it will prompt you to close the softwares you are currently updating, if they are currtly opened.
