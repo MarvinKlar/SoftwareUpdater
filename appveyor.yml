@@ -1,0 +1,3 @@
+artifacts:
+  - path: C:\projects\softwareupdater\SoftwareUpdater\bin\Debug\SoftwareUpdater.exe
+    name: SoftwareUpdater.exe
